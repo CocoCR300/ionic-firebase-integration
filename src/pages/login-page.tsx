@@ -1,41 +1,77 @@
 import { FirebaseAuthentication } from "@capacitor-firebase/authentication";
-import { IonButton, IonContent, IonIcon, IonInput, IonInputPasswordToggle, IonItem, IonLabel, IonLoading, IonPage, useIonLoading } from "@ionic/react";
-import { useEffect, useState } from "react";
+import { IonButton, IonContent, IonIcon, IonInput, IonInputPasswordToggle, IonPage, useIonLoading } from "@ionic/react";
+import { useContext, useState } from "react";
 import { firebaseAuthentication, firebasePersistencePromise } from "../services/firebase";
-import { AuthError, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithCredential, signInWithEmailAndPassword, signInWithPopup, signOut, UserCredential } from "firebase/auth";
-import { useHistory } from "react-router";
+import { AuthError, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithCredential, signInWithEmailAndPassword, signOut, UserCredential, validatePassword } from "firebase/auth";
 import { logInOutline, logoGoogle, logOutOutline } from "ionicons/icons";
 import { delay } from "../util/promise";
+import { UserSessionContext } from "../components/user-session-provider";
+import { FormTextField } from "../components/form-field";
 
 export default function LoginPage()
 {
-	const history = useHistory();
-	const [present, dismiss] = useIonLoading();
+	const userSession = useContext(UserSessionContext);
+	const [showLoadingIndicator, dismissLoadingIndicator] = useIonLoading();
+	const [validEmailAddress, setValidEmailAddress] = useState(false);
+	const [validPassword, setValidPassword] = useState(false);
 	const [emailAddress, setEmailAddress] = useState("");
 	const [password, setPassword] = useState("");
-	const [asyncOperation, setAsyncOperation] = useState<Promise<void> | null>(null);
-	const [loading, setLoading] = useState(false);
 
-	useEffect(() => {
-		if (asyncOperation) {
-			setLoading(true);
-			asyncOperation.then(() => setLoading(false)).catch(_ => setLoading(false));
-		}
-	}, [asyncOperation]);
+	const valid = validEmailAddress && validPassword;
 
-	useEffect(() => {
-		if (loading) {
-			present({
-				spinner: "circular",
-				message: "Cargando"
-			});
+	function validateEmailAddress(emailAddress: string): string {
+		if (emailAddress == "") {
+			return "You must enter your email address";
 		}
-		else {
-			dismiss();
+
+		const match = emailAddress.match(
+			  /^(?=.{1,254}$)(?=.{1,64}@)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+		);
+
+		if (match == null) {
+			return "Invalid email address";
 		}
-	}, [loading])
+
+		return "";
+	}
+
+	async function validatePasswordLocal(password: string): Promise<string> {
+		if (password == "") {
+			return "You must enter your password";
+		}
+
+		const status = await validatePassword(firebaseAuthentication, password);
+		if (!status.isValid) {
+			const requirements = status.passwordPolicy.customStrengthOptions;
+			const maxLength = requirements.maxPasswordLength;
+			const minLength = requirements.minPasswordLength;
+
+			return `Password must be between ${minLength} and ${maxLength} characters long`;
+		}
+
+		return "";
+	}
+
+	function emailAddressChanged(emailAddress: string, valid: boolean) {
+		setEmailAddress(emailAddress);
+		setValidEmailAddress(valid);
+	}
+
+	function passwordChanged(password: string, valid: boolean) {
+		setPassword(password);
+		setValidPassword(valid);
+	}
+
+	function startAsync(execute: () => Promise<void>, message: string) {
+		showLoadingIndicator({ message });
+		execute().then(() => dismissLoadingIndicator()).catch(_ => dismissLoadingIndicator());
+	}
 
 	async function logInOrSignUp() {
+		if (!valid) {
+			return;
+		}
+
 		const trimmedEmailAddress = emailAddress.trim();
 		const trimmedPassword = password.trim();
 		let userCredential: UserCredential;
@@ -43,6 +79,7 @@ export default function LoginPage()
 		try {
 			console.log("Performing sign up");
 			userCredential = await createUserWithEmailAndPassword(firebaseAuthentication, trimmedEmailAddress, trimmedPassword);
+			console.log("Sign up successful");
 		} catch (error) {
 			const authError = error as AuthError;
 			switch (authError.code) {
@@ -76,10 +113,9 @@ export default function LoginPage()
 				const credentials = GoogleAuthProvider.credential(result.credential.idToken);
 
 				await signInWithCredential(firebaseAuthentication, credentials);
-				history.replace("/");
 			}
 		} catch (error) {
-			console.error("Sign in process has failed");
+			console.error("Google sign in failed");
 			console.error(error);
 		}
 	}
@@ -103,23 +139,26 @@ export default function LoginPage()
 			<IonContent fullscreen>
 				<div style={{ alignItems: "center", display: "flex", flexFlow: "column", height: "100%", justifyContent: "center" }}>
 					<div style={{ display: "flex", flexFlow: "column", gap: "1em" }}>
-						<IonInput fill="outline" label="Email Address" labelPlacement="floating" onIonChange={e => setEmailAddress(e.detail.value!)} required type="email" value={emailAddress} />
-						<IonInput fill="outline" label="Password" labelPlacement="floating" onIonChange={e => setPassword(e.detail.value!)} required type="password" value={password}>
+						<FormTextField changed={emailAddressChanged} label="Email Address" validate={validateEmailAddress} />
+						<FormTextField changed={passwordChanged} fieldType="password" label="Password" validate={validatePasswordLocal}>
 							<IonInputPasswordToggle slot="end" />
-						</IonInput>
+						</FormTextField>
 
-						<IonButton expand="block" onClick={_ => setAsyncOperation(logInOrSignUp)}>
+						<IonButton disabled={!valid} expand="block" onClick={_ => startAsync(logInOrSignUp, "Signing in")}>
 							<IonIcon icon={logInOutline} slot="start" />
 							Log in/Sign up
 						</IonButton>
-						<IonButton expand="block" onClick={_ => setAsyncOperation(signInWithGoogle)}>
+						<IonButton expand="block" onClick={_ => startAsync(signInWithGoogle, "Signing in")}>
 							<IonIcon icon={logoGoogle} slot="start" />
 							Sign in with Google
 						</IonButton>
-						<IonButton expand="block" onClick={_ => setAsyncOperation(logOut)}>
-							<IonIcon icon={logOutOutline} name="" slot="start" />
-							Log out
-						</IonButton>
+						{
+							userSession.loggedIn &&
+								<IonButton expand="block" onClick={_ => startAsync(logOut, "Signing out")}>
+									<IonIcon icon={logOutOutline} name="" slot="start" />
+									Log out
+								</IonButton>
+						}
 					</div>
 				</div>
 			</IonContent>
