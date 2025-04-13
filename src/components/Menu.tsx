@@ -11,9 +11,11 @@ import {
 } from '@ionic/react';
 
 import { useLocation } from 'react-router-dom';
-import { archiveOutline, archiveSharp, heartOutline, heartSharp, logIn, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, trashOutline, trashSharp, warningOutline, warningSharp } from 'ionicons/icons';
+import { archiveOutline, archiveSharp, heartOutline, heartSharp, logIn, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, person, trashOutline, trashSharp, warningOutline, warningSharp } from 'ionicons/icons';
 import './Menu.css';
 import { LogOutButton } from './logout-button';
+import { UserSessionContext } from './user-session-provider';
+import { useContext } from 'react';
 
 interface AppPage {
 	url: string;
@@ -28,6 +30,12 @@ const appPages: AppPage[] = [
 		url: '/login',
 		iosIcon: logIn,
 		mdIcon: logIn
+	},
+	{
+		title: 'User info',
+		url: '/user-info',
+		iosIcon: person,
+		mdIcon: person
 	},
 	{
 		title: 'Inbox',
@@ -69,14 +77,15 @@ const appPages: AppPage[] = [
 
 export function Menu()
 {
+	const userSession = useContext(UserSessionContext);
 	const location = useLocation();
 
 	return (
 		<IonMenu contentId="main" type="overlay">
 			<IonContent>
 				<IonList id="inbox-list">
-					<IonListHeader>Inbox</IonListHeader>
-					<IonNote>hi@ionicframework.com</IonNote>
+					<IonListHeader>Ionic — Firebase Integration</IonListHeader>
+					<IonNote>{userSession.user!.email}</IonNote>
 					{appPages.map((appPage, index) => {
 						return (
 							<IonMenuToggle key={index} autoHide={false}>

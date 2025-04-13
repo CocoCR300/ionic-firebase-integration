@@ -1,4 +1,4 @@
-import { IonApp, IonRouterOutlet, IonSplitPane, setupIonicReact } from '@ionic/react';
+import { IonApp, IonLabel, IonRouterOutlet, IonSplitPane, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
 import Menu from './components/Menu';
@@ -24,27 +24,62 @@ import '@ionic/react/css/palettes/dark.system.css';
 /* Theme variables */
 import './theme/variables.css';
 import LoginPage from './pages/login-page';
-import { useContext } from 'react';
+import { ReactNode, useContext, useEffect, useState } from 'react';
 import { UserSessionContext } from './components/user-session-provider';
+import UserInfoPage from './pages/user-info-page';
+import { firebasePersistencePromise } from './services/firebase';
+import { delay } from './util/promise';
 
 setupIonicReact();
 
 export default function App()
 {
 	const userSession = useContext(UserSessionContext);
+	const [loading, setLoading] = useState(true);
 
-	if (!userSession.loggedIn) {
-		return LoginPage();
+	useEffect(() => {
+		awaitFirebaseInitialization();
+	}, []);
+
+	async function awaitFirebaseInitialization() {
+		try {
+			await delay(2000);
+			await firebasePersistencePromise;
+		} finally {
+			setLoading(false);
+		}
 	}
 
-	return (
-		<IonApp>
+	let content: ReactNode;
+	if (loading) {
+		content = (
+			<div style={{ alignItems: "center", display: "flex", flexFlow: "column", height: "100%", justifyContent: "center" }}>
+				<div style={{ background: "white", clipPath: "circle(40%)", padding: "1em"  }}>
+					<img src="spinning-orange.gif"></img>
+				</div>
+				<IonLabel style={{ maxWidth: "40%", textAlign: "center" }}>
+					<h1 style={{ marginBottom: "1em" }}>Loading</h1>
+					<h4>I love this orange</h4>
+					<h6>Have I told you that I... USE FEDORA LINUX 41 BTW</h6>
+					<h6>I also use Neovim, tmux, Kitty as my terminal emulator and Zen Browser, to avoid espionage</h6>
+				</IonLabel>
+			</div>
+	   );
+	}
+	else if (!userSession.loggedIn) {
+		content = (<LoginPage/>);
+	}
+	else {
+		content = (
 			<IonReactRouter>
 				<IonSplitPane contentId="main">
 					<Menu />
 					<IonRouterOutlet id="main">
 						<Route path="/login" exact={true}>
 							<LoginPage/>
+						</Route>
+						<Route path="/user-info" exact={true}>
+							<UserInfoPage/>
 						</Route>
 						<Route path="/" exact={true}>
 							<Redirect to="/folder/Inbox" />
@@ -55,6 +90,12 @@ export default function App()
 					</IonRouterOutlet>
 				</IonSplitPane>
 			</IonReactRouter>
+		); 
+	}
+
+	return (
+		<IonApp>
+			{ content }
 		</IonApp>
 	);
 }
