@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "464256599350",
+    "project_id": "mobile-dev-test-4c648",
+    "storage_bucket": "mobile-dev-test-4c648.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:464256599350:android:986a39fdb7cfae99629f97",
+        "android_client_info": {
+          "package_name": "me.cococr300.mobile_dev_test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "464256599350-23dkhr5cl7n1aff6h8odbirfotv74uho.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhPsj_6kmClwkG6bKvJMa-cztVpgfpuss"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "464256599350-23dkhr5cl7n1aff6h8odbirfotv74uho.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

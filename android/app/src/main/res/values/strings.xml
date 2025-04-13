@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Firebase Integration</string>
+    <string name="title_activity_main">Firebase Integration</string>
+    <string name="package_name">me.cococr300.mobile_dev_test</string>
+    <string name="custom_url_scheme">me.cococr300.mobile_dev_test</string>
+</resources>

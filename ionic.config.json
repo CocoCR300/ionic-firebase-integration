@@ -1,5 +1,8 @@
 {
-  "name": "firebase-integration",
-  "integrations": {},
-  "type": "react-vite"
+	"id": "me.cococr300.mobile_dev_test",
+	"name": "Firebase Integration",
+	"integrations": {
+	"capacitor": {}
+	},
+	"type": "react-vite"
 }

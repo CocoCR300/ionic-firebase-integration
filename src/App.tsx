@@ -33,27 +33,30 @@ import '@ionic/react/css/palettes/dark.system.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import LoginPage from './pages/login-page';
 
 setupIonicReact();
 
-const App: React.FC = () => {
-  return (
-    <IonApp>
-      <IonReactRouter>
-        <IonSplitPane contentId="main">
-          <Menu />
-          <IonRouterOutlet id="main">
-            <Route path="/" exact={true}>
-              <Redirect to="/folder/Inbox" />
-            </Route>
-            <Route path="/folder/:name" exact={true}>
-              <Page />
-            </Route>
-          </IonRouterOutlet>
-        </IonSplitPane>
-      </IonReactRouter>
-    </IonApp>
-  );
-};
+export default function App() {
+	return (
+		<IonApp style={{ marginTop: "var(--ion-safe-area-top)" }}>
+			<IonReactRouter>
+				<IonSplitPane contentId="main">
+					<Menu />
+					<IonRouterOutlet id="main">
+						<Route path="/login" exact={true}>
+							<LoginPage/>
+						</Route>
+						<Route path="/" exact={true}>
+							<Redirect to="/folder/Inbox" />
+						</Route>
+						<Route path="/folder/:name" exact={true}>
+							<Page />
+						</Route>
+					</IonRouterOutlet>
+				</IonSplitPane>
+			</IonReactRouter>
+		</IonApp>
+	);
+}
 
-export default App;
