@@ -5,12 +5,19 @@ const config: CapacitorConfig = {
 	appName: 'Firebase Integration',
 	webDir: 'dist',
 	bundledWebRuntime: false,
+	server: {
+		cleartext: true,
+		androidScheme: "http"
+	},
 	plugins: {
 		FirebaseAuthentication: {
 			skipNativeAuth: false,
 			providers: [
 				"google.com"
 			]
+		},
+		PushNotifications: {
+			presentationOptions: ["badge", "sound", "alert"]
 		}
 	}
 };

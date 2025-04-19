@@ -11,7 +11,7 @@ import {
 } from '@ionic/react';
 
 import { useLocation } from 'react-router-dom';
-import { archiveOutline, archiveSharp, heartOutline, heartSharp, logIn, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, person, trashOutline, trashSharp, warningOutline, warningSharp } from 'ionicons/icons';
+import { archiveOutline, archiveSharp, chatbubble, cloud, heartOutline, heartSharp, logIn, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, person, trashOutline, trashSharp, warningOutline, warningSharp } from 'ionicons/icons';
 import './Menu.css';
 import { LogOutButton } from './logout-button';
 import { UserSessionContext } from './user-session-provider';
@@ -36,6 +36,18 @@ const appPages: AppPage[] = [
 		url: '/user-info',
 		iosIcon: person,
 		mdIcon: person
+	},
+	{
+		title: 'Topic subscription',
+		url: '/topic-subscription',
+		iosIcon: chatbubble,
+		mdIcon: chatbubble
+	},
+	{
+		title: 'Push notifications',
+		url: '/push-notifications',
+		iosIcon: cloud,
+		mdIcon: cloud
 	},
 	{
 		title: 'Inbox',

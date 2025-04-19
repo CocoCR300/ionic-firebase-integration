@@ -1,11 +1,11 @@
-import { IonButtons, IonContent, IonHeader, IonLabel, IonMenuButton, IonPage, IonTitle, IonToolbar } from "@ionic/react";
+import { IonLabel } from "@ionic/react";
 import { useContext, useEffect, useState } from "react";
 import { UserSessionContext } from "../components/user-session-provider";
 import { fetchUserRoles } from "../services/user-data";
 import { UserRole } from "../model/user-role";
+import { PageWrapper } from "../components/page-wrapper";
 
-export default function UserInfoPage()
-{
+export default function UserInfoPage() {
 	const userSession = useContext(UserSessionContext);
 	const [userRoles, setUserRoles] = useState<UserRole[]>([]);
 
@@ -33,26 +33,16 @@ export default function UserInfoPage()
 	}, []);
 
 	return (
-		<IonPage>
-			<IonHeader>
-				<IonToolbar>
-					<IonButtons slot="start">
-						<IonMenuButton />
-					</IonButtons>
-					<IonTitle>User info</IonTitle>
-				</IonToolbar>
-			</IonHeader>
-			<IonContent fullscreen>
-				<div style={{ alignItems: "center", display: "flex", flexFlow: "column", height: "100%", justifyContent: "center" }}>
-					<div style={{ display: "flex", flexFlow: "column", gap: "1em" }}>
-						<IonLabel>
-							<h1 style={{ marginBottom: "1em", textAlign: "center" }}>Welcome, {displayName}</h1>
-							<h5>Email Address: {user.email}</h5>
-							<h5>Roles: { rolesDisplay }</h5>
-						</IonLabel>
-					</div>
+		<PageWrapper title="User info">
+			<div style={{ alignItems: "center", display: "flex", flexFlow: "column", height: "100%", justifyContent: "center" }}>
+				<div style={{ display: "flex", flexFlow: "column", gap: "1em" }}>
+					<IonLabel>
+						<h1 style={{ marginBottom: "1em", textAlign: "center" }}>Welcome, {displayName}</h1>
+						<h5>Email Address: {user.email}</h5>
+						<h5>Roles: {rolesDisplay}</h5>
+					</IonLabel>
 				</div>
-			</IonContent>
-		</IonPage>
+			</div>
+		</PageWrapper>
 	);
 }

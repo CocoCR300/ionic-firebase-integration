@@ -1,0 +1,15 @@
+{
+  "name": "push-notification-sender",
+  "version": "1.0.0",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "google-auth-library": "^9.15.1",
+    "googleapis": "^148.0.0"
+  }
+}

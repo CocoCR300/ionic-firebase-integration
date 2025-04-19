@@ -27,8 +27,10 @@ import LoginPage from './pages/login-page';
 import { ReactNode, useContext, useEffect, useState } from 'react';
 import { UserSessionContext } from './components/user-session-provider';
 import UserInfoPage from './pages/user-info-page';
+import PushNotificationsPage  from "./pages/push-notifications";
 import { firebasePersistencePromise } from './services/firebase';
 import { delay } from './util/promise';
+import TopicSubscription from './components/notification/topic-subscription';
 
 setupIonicReact();
 
@@ -80,6 +82,12 @@ export default function App()
 						</Route>
 						<Route path="/user-info" exact={true}>
 							<UserInfoPage/>
+						</Route>
+						<Route path="/topic-subscription" exact={true}>
+							<TopicSubscription/>
+						</Route>
+						<Route path="/push-notifications" exact={true}>
+							<PushNotificationsPage/>
 						</Route>
 						<Route path="/" exact={true}>
 							<Redirect to="/folder/Inbox" />
