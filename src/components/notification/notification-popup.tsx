@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { IonIcon, IonBadge, IonPopover, IonList, IonItem, IonLabel, IonButton } from "@ionic/react";
 import { checkmarkDone, trash, notificationsOutline, checkmark } from "ionicons/icons";
 import NotificationService from "../../services/notification";
@@ -6,9 +6,11 @@ import { firebaseAuthentication, firebasePersistencePromise } from "../../servic
 import { onAuthStateChanged } from "firebase/auth";
 
 import "./notification-popup.css";
+import { UserSessionContext } from "../user-session-provider";
 
 export default function NotificationsPopup()
 {
+	const userSession = useContext(UserSessionContext);
 	const notificationService = NotificationService.instance;
 
 	const [unreadCount, setUnreadCount] = useState(0);
@@ -22,11 +24,9 @@ export default function NotificationsPopup()
 
 	async function setUpListeners() {
 		await firebasePersistencePromise;
-		const unsubscribe = onAuthStateChanged(firebaseAuthentication, (user) => {
-			if (user) {
-				notificationService.initialize(user.uid);
-			}
-		});
+
+		const user = userSession.user!;
+		notificationService.initialize(user.uid);
 		
 		// Actualizar el estado cuando cambien las notificaciones
 		const removeListener = notificationService.addListener(() => {
@@ -39,7 +39,6 @@ export default function NotificationsPopup()
 		setNotifications(notificationService.getNotifications());
 
 		return () => {
-			unsubscribe();
 			removeListener();
 		};
 	}

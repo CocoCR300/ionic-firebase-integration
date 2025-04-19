@@ -43,12 +43,14 @@ export default class NotificationService
 
 				// Escuchar por eventos de notificaciones push
 				PushNotifications.addListener("registration", (token) => {
+					console.log("Successfully registered to push notifications");
 					this._deviceToken = token.value;
 					savePushToken(token.value, uid);
 				});
 
 				PushNotifications.addListener("pushNotificationReceived", (notification) => {
-					console.log("Notificación recibida:", notification);
+					console.log("Notificación recibida");
+					console.log(JSON.stringify(notification));
 					this.addNotification(notification);
 					this.notifyListeners();
 				});
@@ -84,7 +86,6 @@ export default class NotificationService
 		localStorage.setItem("notifications", JSON.stringify(this.notifications));
 	}
 
-	// Cargar notificaciones guardadas
 	private loadSavedNotifications() {
 		const saved = localStorage.getItem("notifications");
 		if (saved) {
@@ -96,12 +97,10 @@ export default class NotificationService
 		}
 	}
 
-	// Obtener todas las notificaciones
 	getNotifications() {
-		return [...this.notifications];
+		return this.notifications;
 	}
 
-	// Obtener cantidad de notificaciones no leídas
 	getUnreadCount() {
 		return this.notifications.filter(n => !n.read).length;
 	}
