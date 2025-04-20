@@ -17,7 +17,8 @@ import { LogOutButton } from './logout-button';
 import { UserSessionContext } from './user-session-provider';
 import { useContext } from 'react';
 
-interface AppPage {
+interface AppPage
+{
 	url: string;
 	iosIcon: string;
 	mdIcon: string;
@@ -38,8 +39,8 @@ const appPages: AppPage[] = [
 		mdIcon: person
 	},
 	{
-		title: 'Topic subscription',
-		url: '/topic-subscription',
+		title: 'Topics',
+		url: '/topics',
 		iosIcon: chatbubble,
 		mdIcon: chatbubble
 	},

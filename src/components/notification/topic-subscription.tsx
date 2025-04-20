@@ -19,21 +19,12 @@ import { PushNotifications } from "@capacitor/push-notifications";
 import { firestore, firebaseMessaging } from "../../services/firebase";
 import NotificationsPopup from "./notification-popup";
 import NotificationService from "../../services/notification";
-
-interface Topic
-{
-	id: string;
-	name: string;
-	subscribed: boolean;
-}
+import { Topic, TOPICS } from "../../model/topic";
 
 export default function TopicSubscription()
 {
 	const fcmToken = NotificationService.instance.deviceToken;
-	const [topics, setTopics] = useState<Topic[]>([
-		{ id: "sports", name: "Deportes", subscribed: false },
-		{ id: "challenges", name: "Nuevos Retos", subscribed: false },
-	]);
+	const [topics, setTopics] = useState<Topic[]>(TOPICS);
 
 	const [showToast, setShowToast] = useState(false);
 	const [toastMessage, setToastMessage] = useState("");

@@ -19,24 +19,22 @@ export default function NotificationsPopup()
 	const [notifications, setNotifications] = useState<any[]>([]);
 
 	useEffect(() => {
-		setUpListeners();
+		setUpNotifications();
 	}, []);
 
-	async function setUpListeners() {
+	async function setUpNotifications() {
 		await firebasePersistencePromise;
 
 		const user = userSession.user!;
 		notificationService.initialize(user.uid);
 		
-		// Actualizar el estado cuando cambien las notificaciones
 		const removeListener = notificationService.addListener(() => {
-			setUnreadCount(notificationService.getUnreadCount());
-			setNotifications(notificationService.getNotifications());
+			setUnreadCount(notificationService.unreadCount);
+			setNotifications(notificationService.notifications);
 		});
 
-		// Cargar estado inicial
-		setUnreadCount(notificationService.getUnreadCount());
-		setNotifications(notificationService.getNotifications());
+		setUnreadCount(notificationService.unreadCount);
+		setNotifications(notificationService.notifications);
 
 		return () => {
 			removeListener();

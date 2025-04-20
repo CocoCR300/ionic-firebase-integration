@@ -61,9 +61,8 @@ export default function App()
 				</div>
 				<IonLabel style={{ maxWidth: "40%", textAlign: "center" }}>
 					<h1 style={{ marginBottom: "1em" }}>Loading</h1>
-					<h4>I love this orange</h4>
-					<h6>Have I told you that I... USE FEDORA LINUX 41 BTW</h6>
-					<h6>I also use Neovim, tmux, Kitty as my terminal emulator and Zen Browser, to avoid espionage</h6>
+					<h4>Remember to add the required environment variables (see the src/vite-env.d.ts file)</h4>
+					<h6>I added a new one, so keep that in mind</h6>
 				</IonLabel>
 			</div>
 	   );
@@ -83,7 +82,7 @@ export default function App()
 						<Route path="/user-info" exact={true}>
 							<UserInfoPage/>
 						</Route>
-						<Route path="/topic-subscription" exact={true}>
+						<Route path="/topics" exact={true}>
 							<TopicSubscription/>
 						</Route>
 						<Route path="/push-notifications" exact={true}>

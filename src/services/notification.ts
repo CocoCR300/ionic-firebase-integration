@@ -1,6 +1,15 @@
-import { PushNotifications } from "@capacitor/push-notifications";
+import { PushNotifications, PushNotificationSchema } from "@capacitor/push-notifications";
 
 import { savePushToken } from "../services/firebase";
+
+export interface AppNotification
+{
+	id: string;
+	title: string;
+	body: string;
+	data: string;
+	read: boolean;
+}
 
 export default class NotificationService
 {
@@ -8,7 +17,7 @@ export default class NotificationService
 
 	private _deviceToken: string;
 	private listeners: Function[] = [];
-	private notifications: any[] = [];
+	private _notifications: AppNotification[] = [];
 
 	static get instance(): NotificationService {
 		if (!NotificationService._instance) {
@@ -19,6 +28,14 @@ export default class NotificationService
 
 	get deviceToken() { return this._deviceToken; }
 
+	get notifications(): AppNotification[] {
+		return this._notifications;
+	}
+
+	get unreadCount(): number {
+		return this._notifications.filter(n => !n.read).length;
+	}
+
 	private constructor() {
 		// Constructor privado para Singleton
 		this._deviceToken = "";
@@ -28,7 +45,7 @@ export default class NotificationService
 	async initialize(uid: string) {
 		await this.initializeNative(uid);
 
-		this.loadSavedNotifications();
+		this._loadSavedNotifications();
 	}
 
 	// Inicializar para dispositivos nativos
@@ -51,14 +68,13 @@ export default class NotificationService
 				PushNotifications.addListener("pushNotificationReceived", (notification) => {
 					console.log("Notificación recibida");
 					console.log(JSON.stringify(notification));
-					this.addNotification(notification);
-					this.notifyListeners();
+					this._addNotification(notification);
 				});
 
 				PushNotifications.addListener("pushNotificationActionPerformed", (notification) => {
 					console.log("Acción realizada en notificación:", notification);
-					this.addNotification(notification.notification);
-					this.notifyListeners();
+					this._addNotification(notification.notification);
+					this._notifyListeners();
 				});
 			}
 		} catch (error) {
@@ -66,79 +82,68 @@ export default class NotificationService
 		}
 	}
 
-	// Añadir notificación a la lista
-	private addNotification(notification: any) {
+	private _addNotification(receivedNotification: PushNotificationSchema) {
+		if (this._notifications.some(notification => notification.id == receivedNotification.id)) {
+			return;
+		}
 		const newNotification = {
-			id: Date.now().toString(),
-			title: notification.title || "Sin título",
-			body: notification.body || "",
-			data: notification.data || {},
+			id: receivedNotification.id,
+			title: receivedNotification.title || "Sin título",
+			body: receivedNotification.body || "",
+			data: receivedNotification.data || {},
 			read: false,
 			date: new Date().toISOString()
 		};
 
-		this.notifications = [newNotification, ...this.notifications];
-		this.saveNotifications();
+		this._notifications = [newNotification, ...this._notifications];
+		this._saveNotifications();
+		this._notifyListeners();
 	}
 
-	// Guardar notificaciones en localStorage
-	private saveNotifications() {
-		localStorage.setItem("notifications", JSON.stringify(this.notifications));
+	private _saveNotifications() {
+		localStorage.setItem("notifications", JSON.stringify(this._notifications));
 	}
 
-	private loadSavedNotifications() {
+	private _loadSavedNotifications() {
 		const saved = localStorage.getItem("notifications");
 		if (saved) {
 			try {
-				this.notifications = JSON.parse(saved);
+				this._notifications = JSON.parse(saved);
 			} catch (e) {
-				this.notifications = [];
+				this._notifications = [];
 			}
 		}
 	}
 
-	getNotifications() {
-		return this.notifications;
+	private _notifyListeners() {
+		this.listeners.forEach(listener => listener());
 	}
 
-	getUnreadCount() {
-		return this.notifications.filter(n => !n.read).length;
-	}
-
-	// Marcar notificación como leída
 	markAsRead(id: string) {
-		this.notifications = this.notifications.map(n =>
+		this._notifications = this._notifications.map(n =>
 			n.id === id ? { ...n, read: true } : n
 		);
-		this.saveNotifications();
-		this.notifyListeners();
+		this._saveNotifications();
+		this._notifyListeners();
 	}
 
-	// Marcar todas las notificaciones como leídas
 	markAllAsRead() {
-		this.notifications = this.notifications.map(n => ({ ...n, read: true }));
-		this.saveNotifications();
-		this.notifyListeners();
+		this._notifications = this._notifications.map(n => ({ ...n, read: true }));
+		this._saveNotifications();
+		this._notifyListeners();
 	}
 
-	// Eliminar notificación
 	deleteNotification(id: string) {
-		this.notifications = this.notifications.filter(n => n.id !== id);
-		this.saveNotifications();
-		this.notifyListeners();
+		this._notifications = this._notifications.filter(n => n.id !== id);
+		this._saveNotifications();
+		this._notifyListeners();
 	}
 
-	// Añadir listener para cambios en notificaciones
 	addListener(listener: Function) {
 		this.listeners.push(listener);
 		return () => {
 			this.listeners = this.listeners.filter(l => l !== listener);
 		};
-	}
-
-	// Notificar a todos los listeners sobre cambios
-	private notifyListeners() {
-		this.listeners.forEach(listener => listener());
 	}
 }
 

@@ -11,6 +11,8 @@ interface FormTextFieldData
 	fieldType?: string;
 	changed: SetterFn;
 	validate: ValidatorFn;
+
+	ref?: any;
 }
 
 export function FormTextField(data: FormTextFieldData)
@@ -65,9 +67,9 @@ export function FormTextField(data: FormTextFieldData)
 	}
 	
 	return (
-		<IonInput	className={classes} counter={true} errorText={errorMessage} fill="outline" label={data.label}
-					labelPlacement="floating" onIonInput={e => setText(e.detail.value!)}
-					onIonBlur={() => setTouched(true)}
+		<IonInput	ref={data.ref} className={classes} counter={true} errorText={errorMessage}
+					fill="outline" label={data.label} labelPlacement="floating"
+					onIonInput={e => setText(e.detail.value!)} onIonBlur={() => setTouched(true)}
 					required type={data.fieldType as any} value={text}>
 			{ data.children }
 		</IonInput>

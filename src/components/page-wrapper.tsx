@@ -24,9 +24,7 @@ export function PageWrapper(data: PageWrapperData)
 				</IonToolbar>
 			</IonHeader>
 
-			<IonContent fullscreen>
 			{ data.children }
-			</IonContent>
 		</IonPage>
 	);
 };
