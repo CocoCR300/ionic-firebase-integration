@@ -1,13 +1,15 @@
-import { useParams } from "react-router";
 import ExploreContainer from "../components/ExploreContainer";
 
 import "./Page.css";
 import { PageWrapper } from "../components/page-wrapper";
 
-export function Page()
+interface PageData
 {
-	const { name } = useParams<{ name: string; }>();
+	name: string;
+}
 
+export function Page({ name }: PageData)
+{
 	return (
 		<PageWrapper title={name}>
 			<ExploreContainer name={name} />

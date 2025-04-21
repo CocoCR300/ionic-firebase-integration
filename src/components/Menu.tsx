@@ -11,104 +11,48 @@ import {
 } from '@ionic/react';
 
 import { useLocation } from 'react-router-dom';
-import { archiveOutline, archiveSharp, chatbubble, cloud, heartOutline, heartSharp, logIn, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, person, trashOutline, trashSharp, warningOutline, warningSharp } from 'ionicons/icons';
-import './Menu.css';
 import { LogOutButton } from './logout-button';
 import { UserSessionContext } from './user-session-provider';
 import { useContext } from 'react';
+import { APP_ROUTES } from '../app-routes';
 
-interface AppPage
-{
-	url: string;
-	iosIcon: string;
-	mdIcon: string;
-	title: string;
-}
-
-const appPages: AppPage[] = [
-	{
-		title: 'Login',
-		url: '/login',
-		iosIcon: logIn,
-		mdIcon: logIn
-	},
-	{
-		title: 'User info',
-		url: '/user-info',
-		iosIcon: person,
-		mdIcon: person
-	},
-	{
-		title: 'Topics',
-		url: '/topics',
-		iosIcon: chatbubble,
-		mdIcon: chatbubble
-	},
-	{
-		title: 'Push notifications',
-		url: '/push-notifications',
-		iosIcon: cloud,
-		mdIcon: cloud
-	},
-	{
-		title: 'Inbox',
-		url: '/folder/Inbox',
-		iosIcon: mailOutline,
-		mdIcon: mailSharp
-	},
-	{
-		title: 'Outbox',
-		url: '/folder/Outbox',
-		iosIcon: paperPlaneOutline,
-		mdIcon: paperPlaneSharp
-	},
-	{
-		title: 'Favorites',
-		url: '/folder/Favorites',
-		iosIcon: heartOutline,
-		mdIcon: heartSharp
-	},
-	{
-		title: 'Archived',
-		url: '/folder/Archived',
-		iosIcon: archiveOutline,
-		mdIcon: archiveSharp
-	},
-	{
-		title: 'Trash',
-		url: '/folder/Trash',
-		iosIcon: trashOutline,
-		mdIcon: trashSharp
-	},
-	{
-		title: 'Spam',
-		url: '/folder/Spam',
-		iosIcon: warningOutline,
-		mdIcon: warningSharp
-	}
-];
+import './Menu.css';
 
 export function Menu()
 {
 	const userSession = useContext(UserSessionContext);
 	const location = useLocation();
 
+	let visibleRoutes = APP_ROUTES;
+	let userRoles: string[] = [];
+	if (userSession.loggedIn) {
+		userRoles = userSession.user!.roles;
+	}
+
+	visibleRoutes = APP_ROUTES.filter(
+		route => route.userNavigatable &&
+			(route.allowedRoles.length == 0 ||
+			 userRoles.some(userRole => route.allowedRoles.some(allowedRole => userRole == allowedRole))
+			)
+	);
+
 	return (
 		<IonMenu contentId="main" type="overlay">
 			<IonContent>
 				<IonList id="inbox-list">
 					<IonListHeader>Ionic — Firebase Integration</IonListHeader>
-					<IonNote>{userSession.user!.email}</IonNote>
-					{appPages.map((appPage, index) => {
-						return (
-							<IonMenuToggle key={index} autoHide={false}>
-								<IonItem className={location.pathname === appPage.url ? 'selected' : ''} routerLink={appPage.url} routerDirection="none" lines="none" detail={false}>
-									<IonIcon aria-hidden="true" slot="start" ios={appPage.iosIcon} md={appPage.mdIcon} />
-									<IonLabel>{appPage.title}</IonLabel>
-								</IonItem>
-							</IonMenuToggle>
-						);
-					})}
+					<IonNote>{userSession.user!.emailAddress}</IonNote>
+					{
+						visibleRoutes.map((route, index) => (
+								<IonMenuToggle key={index} autoHide={false}>
+									<IonItem className={location.pathname === route.path ? "selected" : ""} routerLink={route.path} routerDirection="root" lines="none" detail={false}>
+										<IonIcon aria-hidden="true" slot="start" icon={route.icon} />
+										<IonLabel>{route.title}</IonLabel>
+									</IonItem>
+								</IonMenuToggle>
+							)
+						)
+					}
 				</IonList>
 
 				<LogOutButton/>

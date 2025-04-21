@@ -1,27 +1,20 @@
 import { useState, useEffect } from "react";
 import {
 	IonContent,
-	IonHeader,
-	IonPage,
-	IonTitle,
-	IonToolbar,
 	IonList,
 	IonItem,
-	IonLabel,
 	IonToggle,
 	IonToast,
-    IonButtons,
-    IonMenuButton,
 } from "@ionic/react";
 import { getToken } from "firebase/messaging";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { PushNotifications } from "@capacitor/push-notifications";
-import { firestore, firebaseMessaging } from "../../services/firebase";
-import NotificationsPopup from "./notification-popup";
-import NotificationService from "../../services/notification";
-import { Topic, TOPICS } from "../../model/topic";
+import { firestore } from "../services/firebase";
+import NotificationService from "../services/notification";
+import { Topic, TOPICS } from "../model/topic";
+import { PageWrapper } from "../components/page-wrapper";
 
-export default function TopicSubscription()
+export default function TopicsPage()
 {
 	const fcmToken = NotificationService.instance.deviceToken;
 	const [topics, setTopics] = useState<Topic[]>(TOPICS);
@@ -97,7 +90,7 @@ export default function TopicSubscription()
 			}, { merge: true });
 
 			const topic = updatedTopics.find(t => t.id === topicId);
-			setToastMessage(`${topic?.subscribed ? "Suscrito a" : "Desuscrito de"} ${topic?.name}`);
+			setToastMessage(`${topic?.subscribed ? "Subscribed to" : "Unsubscribed from"} ${topic?.name}`);
 			setShowToast(true);
 
 		} catch (error) {
@@ -108,40 +101,32 @@ export default function TopicSubscription()
 	};
 
 	return (
-		<IonPage>
-			<IonHeader>
-				<IonToolbar>
-					<IonButtons slot="start">
-						<IonMenuButton />
-					</IonButtons>
-
-					<IonTitle>Topic subscriptions</IonTitle>
-
-					<IonButtons slot="end">
-						<NotificationsPopup />
-					</IonButtons>
-				</IonToolbar>
-			</IonHeader>
+		<PageWrapper title="Topics">
 			<IonContent>
-				<IonList>
-					{topics.map((topic) => (
-						<IonItem key={topic.id}>
-							<IonLabel>{topic.name}</IonLabel>
-							<IonToggle
-								checked={topic.subscribed}
-								onIonChange={() => handleToggle(topic.id)}
-							/>
-						</IonItem>
-					))}
-				</IonList>
-				<IonToast
-					isOpen={showToast}
-					onDidDismiss={() => setShowToast(false)}
-					message={toastMessage}
-					duration={2000}
-				/>
+				<div style={{ margin: "1em" }}>
+					<h5>Subscribe to topics</h5>
+					<IonList>
+						{
+							topics.map((topic) => (
+								<IonItem key={ topic.id }>
+									<IonToggle
+										checked={ topic.subscribed }
+										onIonChange={ () => handleToggle(topic.id) }>
+										{ topic.name }
+									</IonToggle>
+								</IonItem>
+							))
+						}
+					</IonList>
+					<IonToast
+						isOpen={showToast}
+						onDidDismiss={() => setShowToast(false)}
+						message={toastMessage}
+						duration={2000}
+					/>
+				</div>
 			</IonContent>
-		</IonPage>
+		</PageWrapper>
 	);
 };
 

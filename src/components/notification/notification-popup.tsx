@@ -26,7 +26,7 @@ export default function NotificationsPopup()
 		await firebasePersistencePromise;
 
 		const user = userSession.user!;
-		notificationService.initialize(user.uid);
+		notificationService.initialize(user.id);
 		
 		const removeListener = notificationService.addListener(() => {
 			setUnreadCount(notificationService.unreadCount);

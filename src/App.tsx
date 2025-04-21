@@ -1,36 +1,34 @@
-import { IonApp, IonLabel, IonRouterOutlet, IonSplitPane, setupIonicReact } from '@ionic/react';
-import { IonReactRouter } from '@ionic/react-router';
-import { Redirect, Route } from 'react-router-dom';
-import Menu from './components/Menu';
-import Page from './pages/Page';
+import { IonApp, IonLabel, IonRouterOutlet, IonSplitPane, setupIonicReact } from "@ionic/react";
+import { IonReactRouter } from "@ionic/react-router";
+import { Redirect, Route } from "react-router-dom";
+import Menu from "./components/Menu";
+import Page from "./pages/Page";
 
-import '@ionic/react/css/core.css';
+import "@ionic/react/css/core.css";
 
-import '@ionic/react/css/normalize.css';
-import '@ionic/react/css/structure.css';
-import '@ionic/react/css/typography.css';
+import "@ionic/react/css/normalize.css";
+import "@ionic/react/css/structure.css";
+import "@ionic/react/css/typography.css";
 
-import '@ionic/react/css/padding.css';
-import '@ionic/react/css/float-elements.css';
-import '@ionic/react/css/text-alignment.css';
-import '@ionic/react/css/text-transformation.css';
-import '@ionic/react/css/flex-utils.css';
-import '@ionic/react/css/display.css';
+import "@ionic/react/css/padding.css";
+import "@ionic/react/css/float-elements.css";
+import "@ionic/react/css/text-alignment.css";
+import "@ionic/react/css/text-transformation.css";
+import "@ionic/react/css/flex-utils.css";
+import "@ionic/react/css/display.css";
 
-/* import '@ionic/react/css/palettes/dark.always.css'; */
-/* import '@ionic/react/css/palettes/dark.class.css'; */
-import '@ionic/react/css/palettes/dark.system.css';
+/* import "@ionic/react/css/palettes/dark.always.css"; */
+/* import "@ionic/react/css/palettes/dark.class.css"; */
+import "@ionic/react/css/palettes/dark.system.css";
 
 /* Theme variables */
-import './theme/variables.css';
-import LoginPage from './pages/login-page';
-import { ReactNode, useContext, useEffect, useState } from 'react';
-import { UserSessionContext } from './components/user-session-provider';
-import UserInfoPage from './pages/user-info-page';
-import PushNotificationsPage  from "./pages/push-notifications";
-import { firebasePersistencePromise } from './services/firebase';
-import { delay } from './util/promise';
-import TopicSubscription from './components/notification/topic-subscription';
+import "./theme/variables.css";
+import LoginPage from "./pages/login-page";
+import { ReactNode, useContext, useEffect, useState } from "react";
+import { UserSessionContext } from "./components/user-session-provider";
+import { firebasePersistencePromise } from "./services/firebase";
+import ProtectedRoute from "./components/protected-route";
+import { APP_ROUTES } from "./app-routes";
 
 setupIonicReact();
 
@@ -45,7 +43,6 @@ export default function App()
 
 	async function awaitFirebaseInitialization() {
 		try {
-			await delay(2000);
 			await firebasePersistencePromise;
 		} finally {
 			setLoading(false);
@@ -76,23 +73,21 @@ export default function App()
 				<IonSplitPane contentId="main">
 					<Menu />
 					<IonRouterOutlet id="main">
-						<Route path="/login" exact={true}>
-							<LoginPage/>
-						</Route>
-						<Route path="/user-info" exact={true}>
-							<UserInfoPage/>
-						</Route>
-						<Route path="/topics" exact={true}>
-							<TopicSubscription/>
-						</Route>
-						<Route path="/push-notifications" exact={true}>
-							<PushNotificationsPage/>
-						</Route>
+						{
+							APP_ROUTES.map((route, index) => {
+								if (route.allowedRoles.length > 0) {
+									return (
+										<ProtectedRoute key={index} {...route}/>
+									);
+								}
+
+								return (
+									<Route key={index} {...route}/>
+								);
+							})
+						}
 						<Route path="/" exact={true}>
-							<Redirect to="/folder/Inbox" />
-						</Route>
-						<Route path="/folder/:name" exact={true}>
-							<Page />
+							<Redirect to="/home" />
 						</Route>
 					</IonRouterOutlet>
 				</IonSplitPane>

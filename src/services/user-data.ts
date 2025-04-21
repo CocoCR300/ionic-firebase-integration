@@ -11,7 +11,8 @@ export async function fetchUserRoles(userId: string)
 		const userRoleQuery = query(collection(firestore, USER_ROLE_COLLECTION_NAME), where("user_id", "==", userId));
 		querySnapshot = await getDocs(userRoleQuery);
 	} catch (error: any) {
-		console.error("Error fetching user roles: ", error);
+		console.error("Error fetching user roles");
+		console.error(error);
 		return [];
 	}
 
@@ -21,9 +22,9 @@ export async function fetchUserRoles(userId: string)
 		const data = document.data();
 
 		userRoles.push({
-			document_id: document.id,
-			role_id: data.user_id,
-			name: data.role_name,
+			documentId: document.id,
+			userId: data.user_id,
+			roleNames: data.rol,
 		});
 	}
 

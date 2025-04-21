@@ -1,14 +1,14 @@
-import { User } from "@firebase/auth";
+import { AppUser } from "./user";
 
 export class UserSession
 {
-	readonly user: User | null;
+	readonly user: AppUser | null;
 
 	get loggedIn(): boolean {
 		return this.user != null;
 	}
 
-	constructor(user: User | null)
+	constructor(user: AppUser | null)
 	{
 		this.user = user;
 	}

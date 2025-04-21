@@ -1,6 +1,12 @@
 export interface UserRole
 {
-	document_id: string;
-	role_id: number;
-	name: string;
+	documentId: string;
+	userId: number;
+	roleNames: string[];
+}
+
+export enum UserRoleName
+{
+	Basic = "basic",
+	Admin = "admin"
 }
