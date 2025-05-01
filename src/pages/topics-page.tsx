@@ -13,6 +13,7 @@ import { firestore } from "../services/firebase";
 import NotificationService from "../services/notification";
 import { Topic, TOPICS } from "../model/topic";
 import { PageWrapper } from "../components/page-wrapper";
+import { NotificationSender } from "../services/notification-sender";
 
 export default function TopicsPage()
 {
@@ -74,10 +75,33 @@ export default function TopicsPage()
 		}
 
 		try {
+			const sender = NotificationSender.instance
+			const foundTopic = topics.find(topic => topic.id == topicId);
+
+			if (!foundTopic) {
+				return;
+			}
+
+			let subscribed = foundTopic.subscribed;
+			let action = "subscribe";
+			if (subscribed) {
+				action = "unsubscribe";
+			}
+			subscribed = !subscribed;
+
+			const response = await sender.manageTopicSubscription(action, topicId, fcmToken);
+			if (!response.success) {
+				setToastMessage(`An error occurred while changing subscription to ${foundTopic.name}`);
+				setShowToast(true);
+
+				return;
+			}
+
 			const updatedTopics = topics.map(topic => {
 				if (topic.id === topicId) {
 					return { ...topic, subscribed: !topic.subscribed };
 				}
+
 				return topic;
 			});
 
@@ -89,8 +113,7 @@ export default function TopicsPage()
 				lastUpdated: new Date().toISOString()
 			}, { merge: true });
 
-			const topic = updatedTopics.find(t => t.id === topicId);
-			setToastMessage(`${topic?.subscribed ? "Subscribed to" : "Unsubscribed from"} ${topic?.name}`);
+			setToastMessage(`${subscribed ? "Subscribed to" : "Unsubscribed from"} ${foundTopic?.name}`);
 			setShowToast(true);
 
 		} catch (error) {

@@ -46,7 +46,8 @@ export class NotificationSender
 		}
 	}
 
-	async sendToDevice(title: string, content: string, token: string): Promise<ApiResponse> {
+	async sendToDevice(title: string, content: string, token: string): Promise<ApiResponse>
+	{
 		const response = await this._sendRequest("send-notification", {
 			token,
 			title,
@@ -56,7 +57,8 @@ export class NotificationSender
 		return response;
 	}
 
-	async sendToTopic(title: string, content: string, topicId: string): Promise<ApiResponse> {
+	async sendToTopic(title: string, content: string, topicId: string): Promise<ApiResponse>
+	{
 		const response = await this._sendRequest("send-topic-notification", {
 			topic: topicId,
 			title,
@@ -65,4 +67,16 @@ export class NotificationSender
 
 		return response;
 	}
+
+	async manageTopicSubscription(action: string, topic: string, token: string)
+	{
+		const response = await this._sendRequest("manage-subscription", {
+			action,
+			topic,
+			token
+		});
+
+		return response;
+	}
+
 }
