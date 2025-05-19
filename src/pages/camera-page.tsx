@@ -107,7 +107,7 @@ export default function CameraPage()
 				setImagePreview(uri);
 
 				setFilename(result.filename);
-				console.log("Saved file name: ", result.filename);
+				console.log("Saved file: ", result.uri);
 			}
 		} catch (error: any) {
 			console.error("Error al tomar/seleccionar foto:", error);
@@ -134,7 +134,12 @@ export default function CameraPage()
 		const storageReference = ref(firebaseStorage, filepath);
 
 		try {
-			const uploadResult = await uploadString(storageReference, imagePreview, "data_url");
+			const readResult = await Filesystem.readFile({
+				directory: Directory.Data,
+				path: filepath
+			});
+			
+			const uploadResult = await uploadString(storageReference, readResult.data as string, "base64");
 
 			const downloadURL = await getDownloadURL(storageReference);
 			console.log("URL de descarga de Firebase:", downloadURL);

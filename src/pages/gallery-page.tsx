@@ -15,7 +15,8 @@ export default function GalleryPage()
 	const navigator = useHistory();
 	const imageFileUris = gallery.imageFileUris;
 
-	function showImage(index: number, uri: string) {
+	function showImage(index: number) {
+		const uri = imageFileUris[index];
 		navigator.push(`/image`, { index, imageUri: uri } as ImagePageData);
 	}
 
@@ -33,7 +34,7 @@ export default function GalleryPage()
 				{
 					const srcUri = Capacitor.convertFileSrc(uri); // Why do I have to do this?
 					return (
-						<IonImg onClick={ _ => showImage(index, uri) } src={srcUri} style={{ height: "100%", objectFit: "cover" }}/>
+						<IonImg onClick={ _ => showImage(index) } src={srcUri} style={{ height: "100%", objectFit: "cover" }}/>
 					);
 				}
 			}/>

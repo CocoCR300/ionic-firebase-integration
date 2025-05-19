@@ -1,4 +1,4 @@
-import { useState, ReactNode, useContext } from "react";
+import { ReactNode, useContext } from "react";
 import { IonButton, IonFooter, IonIcon, IonImg, IonLabel } from "@ionic/react";
 import { PageWrapper } from "../components/page-wrapper";
 
@@ -7,6 +7,8 @@ import { Capacitor } from "@capacitor/core";
 import { pencil, trash } from "ionicons/icons";
 import { Dialog } from "@capacitor/dialog";
 import { GalleryContext } from "../components/gallery-provider";
+import { deleteObject, ref } from "firebase/storage";
+import { firebaseStorage } from "../services/firebase";
 
 export interface ImagePageData
 {
@@ -16,7 +18,6 @@ export interface ImagePageData
 
 export default function ImagePage()
 {
-	const [error, setError] = useState(false);
 	const gallery = useContext(GalleryContext);
 	const location = useLocation();
 	const navigator = useHistory();
@@ -31,29 +32,37 @@ export default function ImagePage()
 			return;
 		}
 
-		await gallery.deleteImage(data.index);
+		const uri = await gallery.deleteImage(data.index);
+		const imageFileNameStartIndex = uri.lastIndexOf("/");
+		const imageFileName = uri.substring(imageFileNameStartIndex + 1);
+		console.log(`Image file to be deleted: ${imageFileName}`);
+
+		const photoRef = ref(firebaseStorage, `images/${imageFileName}`);
+		try {
+			await deleteObject(photoRef)
+			console.log("Successfully deleted image from Firebase Storage");
+		}
+		catch (err: any) {
+			console.log(`Couldn't delete image from Firebase Storage: ${err.code}`);
+		}
+
 		navigator.goBack();
 	}
 
-	let imageUri = "";
+	let imageSrcUri = "";
 	if (data) {
-		imageUri = Capacitor.convertFileSrc(data.imageUri);
+		imageSrcUri = Capacitor.convertFileSrc(data.imageUri);
 	}
 
 	let imageView: ReactNode;
-	if (error) {
-		imageView = (
-			<IonLabel>An error occurred while loading the image :(</IonLabel>
-		);
-	}
-	else if (imageUri.length === 0) {
+	if (imageSrcUri.length === 0) {
 		imageView = (
 			<IonLabel>No image was selected</IonLabel>
 		);
 	}
 	else {
 		imageView = (
-			<IonImg src={imageUri}/>
+			<IonImg src={imageSrcUri}/>
 		);
 	}
 

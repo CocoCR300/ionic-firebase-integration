@@ -25,7 +25,7 @@ export class Gallery
 		return result;
 	}
 
-	async deleteImage(index: number): Promise<void>
+	async deleteImage(index: number): Promise<string>
 	{
 		const uri = this.imageFileUris[index];
 		await Filesystem.deleteFile({
@@ -35,6 +35,8 @@ export class Gallery
 		// This is just ridiculous
 		this.imageFileUris.splice(index, 1);
 		this.setImageFileUris(this.imageFileUris.slice(0));
+
+		return uri;
 	}
 }
 
