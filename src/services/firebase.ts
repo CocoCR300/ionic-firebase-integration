@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
 import { getMessaging } from "firebase/messaging";
+import { FirebaseStorage, getStorage } from "firebase/storage";
 
 const firebaseConfiguration = {
 	apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -10,14 +11,14 @@ const firebaseConfiguration = {
 	storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
 	messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
 	appId: import.meta.env.VITE_FIREBASE_APP_ID
-	//measurementId: import.meta.env.VITE_MEASUREMENT_ID || ""
 };
 
 export const firebaseApp = initializeApp(firebaseConfiguration);
 export const firebaseAuthentication = getAuth(firebaseApp);
 export const firestore = getFirestore(firebaseApp);
 export const firebasePersistencePromise = setupPersistence();
-export const firebaseMessaging = getMessaging(firebaseApp);
+//export const firebaseMessaging = getMessaging(firebaseApp);
+export const firebaseStorage = getStorage(firebaseApp);
 
 export async function savePushToken(token: string, uid: string)
 {

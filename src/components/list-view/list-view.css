@@ -1,0 +1,24 @@
+.app-virtuoso-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25em;
+	justify-content: center;
+	padding: 0px 0.5em;
+}
+
+/* It shouldn't be this difficult to set a proper top padding on that damn thing */
+div:has(> .app-virtuoso-grid) {
+	padding-top: 1em;
+}
+
+.app-virtuoso-item {
+	aspect-ratio: 1 / 1;
+	height: auto;
+	width: 32%;
+}
+
+/*@media (width <= 750px) {
+	.app-virtuoso-item {
+		width: 100%;
+	}
+}*/

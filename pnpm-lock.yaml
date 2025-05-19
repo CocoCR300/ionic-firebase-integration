@@ -17,9 +17,21 @@ importers:
       '@capacitor/app':
         specifier: 7.0.1
         version: 7.0.1(@capacitor/core@7.2.0)
+      '@capacitor/barcode-scanner':
+        specifier: ^2.0.3
+        version: 2.0.3(@capacitor/core@7.2.0)
+      '@capacitor/camera':
+        specifier: ^7.0.1
+        version: 7.0.1(@capacitor/core@7.2.0)
       '@capacitor/core':
         specifier: 7.2.0
         version: 7.2.0
+      '@capacitor/dialog':
+        specifier: ^7.0.1
+        version: 7.0.1(@capacitor/core@7.2.0)
+      '@capacitor/filesystem':
+        specifier: ^7.0.1
+        version: 7.0.1(@capacitor/core@7.2.0)
       '@capacitor/haptics':
         specifier: 7.0.1
         version: 7.0.1(@capacitor/core@7.2.0)
@@ -68,6 +80,9 @@ importers:
       react-router-dom:
         specifier: ^5.3.4
         version: 5.3.4(react@19.0.0)
+      react-virtuoso:
+        specifier: ^4.12.7
+        version: 4.12.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
     devDependencies:
       '@capacitor/cli':
         specifier: 7.2.0
@@ -658,6 +673,16 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=7.0.0'
 
+  '@capacitor/barcode-scanner@2.0.3':
+    resolution: {integrity: sha512-ZELdXMRR1fgCWDVbSJtmaEtQeWFknYq09hxJuFyyzqvd31OsexJLMKMFmlq9N+NMEW8jwHaWKa08GlEIxyjzOw==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
+
+  '@capacitor/camera@7.0.1':
+    resolution: {integrity: sha512-gDUFsYlhMra5VVOa4iJV6+MQRhp3VXpTLQY4JDATj7UvoZ8Hv4DG8qplPL9ufUFNoR3QbDDnf8+gbQOsKdkDjg==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
+
   '@capacitor/cli@7.2.0':
     resolution: {integrity: sha512-RNW9vtYYYSDmOdguYBSW0VpRnG/d6lGydlc9DLrJ7qbSPxFrotTz9IjkM48O+SruUma61DyuSqJttdbay2xSxg==}
     engines: {node: '>=20.0.0'}
@@ -665,6 +690,16 @@ packages:
 
   '@capacitor/core@7.2.0':
     resolution: {integrity: sha512-2zCnA6RJeZ9ec4470o8QMZEQTWpekw9FNoqm5TLc10jeCrhvHVI8MPgxdZVc3mOdFlyieYu4AS1fNxSqbS57Pw==}
+
+  '@capacitor/dialog@7.0.1':
+    resolution: {integrity: sha512-0MrGknjGg98LOKZN1SpV4/QfL3G7qE4j/Gs5+P+fi63UKTmwN+HqsZcavU/1ghThEDG7Emiv/uEdZeHaqbaUIg==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
+
+  '@capacitor/filesystem@7.0.1':
+    resolution: {integrity: sha512-dxuKNLFoUejm7tBKkQPs1j7+BLpDh5JKPSVu7nT8jgCbA/KXt5FoCLiepfkjWkYfq60X0JNFzGnIquc5FPOLzQ==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
 
   '@capacitor/haptics@7.0.1':
     resolution: {integrity: sha512-ewZmspE5krgDUj5ZvUDcfNZvgerAIr+3bDSk6DLzyvBZ/dYmr/tMLu5H6WtYaaKYZJ32aZAudGpIal5epDyBYA==}
@@ -2416,6 +2451,9 @@ packages:
     resolution: {integrity: sha512-oWv4T4yJ52iKrufjnyZPkrN0CH3QnrUqdB6In1g5Fe1mia8GmF36gnfNySxoZtxD5+NmYw1EElVXiBk93UeskA==}
     engines: {node: '>=12'}
 
+  html5-qrcode@2.3.8:
+    resolution: {integrity: sha512-jsr4vafJhwoLVEDW3n1KvPnCCXWaQfRng0/EEYk1vNcQGcG/htAdhJX0be8YyqMoSz7+hZvOZSTAepsabiuhiQ==}
+
   http-parser-js@0.5.10:
     resolution: {integrity: sha512-Pysuw9XpUq5dVc/2SMHpuTY01RFl8fttgcyunjL7eEMhGM3cI4eOmiCycJDVCo/7O7ClfQD3SaI6ftDzqOXYMA==}
 
@@ -3108,6 +3146,12 @@ packages:
     resolution: {integrity: sha512-Ys9K+ppnJah3QuaRiLxk+jDWOR1MekYQrlytiXxC1RyfbdsZkS5pvKAzCCr031xHixZwpnsYNT5xysdFHQaYsA==}
     peerDependencies:
       react: '>=15'
+
+  react-virtuoso@4.12.7:
+    resolution: {integrity: sha512-njJp764he6Fi1p89PUW0k2kbyWu9w/y+MwdxmwK2kvdwwzVDbz2c2wMj5xdSruBFVgFTsI7Z85hxZR7aSHBrbQ==}
+    peerDependencies:
+      react: '>=16 || >=17 || >= 18 || >= 19'
+      react-dom: '>=16 || >=17 || >= 18 || >=19'
 
   react@19.0.0:
     resolution: {integrity: sha512-V8AVnmPIICiWpGfm6GLzCR/W5FXLchHop40W4nXBmdlEceh16rCN8O8LNWm5bh5XUX91fh7KpA+W0TgMKmgTpQ==}
@@ -4468,6 +4512,15 @@ snapshots:
     dependencies:
       '@capacitor/core': 7.2.0
 
+  '@capacitor/barcode-scanner@2.0.3(@capacitor/core@7.2.0)':
+    dependencies:
+      '@capacitor/core': 7.2.0
+      html5-qrcode: 2.3.8
+
+  '@capacitor/camera@7.0.1(@capacitor/core@7.2.0)':
+    dependencies:
+      '@capacitor/core': 7.2.0
+
   '@capacitor/cli@7.2.0':
     dependencies:
       '@ionic/cli-framework-output': 2.2.8
@@ -4493,6 +4546,14 @@ snapshots:
   '@capacitor/core@7.2.0':
     dependencies:
       tslib: 2.8.1
+
+  '@capacitor/dialog@7.0.1(@capacitor/core@7.2.0)':
+    dependencies:
+      '@capacitor/core': 7.2.0
+
+  '@capacitor/filesystem@7.0.1(@capacitor/core@7.2.0)':
+    dependencies:
+      '@capacitor/core': 7.2.0
 
   '@capacitor/haptics@7.0.1(@capacitor/core@7.2.0)':
     dependencies:
@@ -6583,6 +6644,8 @@ snapshots:
     dependencies:
       whatwg-encoding: 2.0.0
 
+  html5-qrcode@2.3.8: {}
+
   http-parser-js@0.5.10: {}
 
   http-proxy-agent@5.0.0:
@@ -7315,6 +7378,11 @@ snapshots:
       react-is: 16.13.1
       tiny-invariant: 1.3.3
       tiny-warning: 1.0.3
+
+  react-virtuoso@4.12.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+    dependencies:
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
 
   react@19.0.0: {}
 

@@ -9,6 +9,9 @@ const config: CapacitorConfig = {
 		androidScheme: "http"
 	},
 	plugins: {
+		Camera: {
+			permissions: ["camera", "photos"]
+		},
 		FirebaseAuthentication: {
 			skipNativeAuth: false,
 			providers: [

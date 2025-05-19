@@ -3,8 +3,13 @@ import { UserRoleName } from "./model/user-role";
 import PushNotificationsPage from "./pages/push-notifications";
 import UserInfoPage from "./pages/user-info-page";
 import TopicsPage from "./pages/topics-page";
-import { chatbubble, cloud, home, person } from "ionicons/icons";
+import { barcode, camera, chatbubble, cloud, home, image, person } from "ionicons/icons";
 import Page from "./pages/Page";
+import UnauthorizedPage from "./pages/unauthorized-page";
+import BarcodeScannerPage from "./pages/barcode-scanner-page";
+import CameraPage from "./pages/camera-page";
+import GalleryPage from "./pages/gallery-page";
+import ImagePage from "./pages/image-page";
 
 export interface AppRoute
 {
@@ -58,7 +63,43 @@ export const APP_ROUTES: AppRoute[] = [
 	},
 	{
 		allowedRoles: [],
-		children: <UserInfoPage/>,
+		children: <BarcodeScannerPage/>,
+		exact: true,
+		icon: barcode,
+		path: "/barcode-scanner",
+		title: "Barcode scanner",
+		userNavigatable: true
+	},
+	{
+		allowedRoles: [],
+		children: <CameraPage/>,
+		exact: true,
+		icon: camera,
+		path: "/camera",
+		title: "Camera",
+		userNavigatable: true
+	},
+	{
+		allowedRoles: [],
+		children: <GalleryPage/>,
+		exact: true,
+		icon: image,
+		path: "/gallery",
+		title: "Gallery",
+		userNavigatable: true
+	},
+	{
+		allowedRoles: [],
+		children: <ImagePage/>,
+		exact: true,
+		icon: image,
+		path: "/image",
+		title: "",
+		userNavigatable: false
+	},
+	{
+		allowedRoles: [],
+		children: <UnauthorizedPage/>,
 		exact: true,
 		icon: person,
 		path: "/unauthorized",
