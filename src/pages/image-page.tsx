@@ -1,13 +1,13 @@
-import { ReactNode, useContext } from "react";
-import { IonButton, IonFooter, IonIcon, IonImg, IonLabel } from "@ionic/react";
+import { ReactNode, useContext, useEffect, useState } from "react";
+import { IonButton, IonChip, IonFooter, IonIcon, IonImg, IonLabel } from "@ionic/react";
 import { PageWrapper } from "../components/page-wrapper";
 
 import { useHistory, useLocation } from "react-router";
 import { Capacitor } from "@capacitor/core";
-import { pencil, trash } from "ionicons/icons";
+import { add, close, closeCircle, exit, pencil, trash } from "ionicons/icons";
 import { Dialog } from "@capacitor/dialog";
 import { GalleryContext } from "../components/gallery-provider";
-import { deleteObject, ref } from "firebase/storage";
+import { deleteObject, getMetadata, ref, SettableMetadata, updateMetadata } from "firebase/storage";
 import { firebaseStorage } from "../services/firebase";
 
 export interface ImagePageData
@@ -21,8 +21,77 @@ export default function ImagePage()
 	const gallery = useContext(GalleryContext);
 	const location = useLocation();
 	const navigator = useHistory();
+	const [tags, setTags] = useState<string[]>([]);
+	const [imageFileName, setImageFileName] = useState("");
 
 	const data = location.state as ImagePageData;
+
+	useEffect(() => {
+		const imageUri = data.imageUri;
+		const imageFileNameStartIndex = imageUri.lastIndexOf("/");
+		const filename = imageUri.substring(imageFileNameStartIndex + 1);
+		setImageFileName(filename);
+
+		getImageMetadata(filename);
+	}, []);
+
+	async function getImageMetadata(filename: string) {
+		const path = `images/${filename}`;
+		const storageReference = ref(firebaseStorage, path);
+		const metadata = await getMetadata(storageReference);
+
+		if (metadata.customMetadata && metadata.customMetadata["tags"]) {
+			const tags = JSON.parse(metadata.customMetadata["tags"]);
+			console.log(tags);
+			setTags(tags);
+		}
+	}
+
+	async function addTag() {
+		const result = await Dialog.prompt({
+			message: "Add tag",
+		});
+
+		if (result.cancelled) {
+			return;
+		}
+
+		if (tags.includes(result.value)) {
+			return;
+		}
+
+		const tagsCopy = [...tags, result.value];
+		updateTags(tagsCopy);
+	}
+
+	async function removeTag(tag: string) {
+		const result = await Dialog.confirm({
+			message: "Are you sure you want to remove this tag?",
+		});
+
+		if (!result.value) {
+			return;
+		}
+
+		const index = tags.findIndex(existingTag => existingTag == tag);
+		const tagsCopy = [...tags];
+		tagsCopy.splice(index, 1);
+
+		updateTags(tagsCopy);
+	}
+
+	async function updateTags(tags: string[]) {
+		const metadata: SettableMetadata = {
+			customMetadata: {
+				tags: JSON.stringify(tags)
+			}
+		};
+
+		const storageReference = ref(firebaseStorage, `images/${imageFileName}`);
+		await updateMetadata(storageReference, metadata);
+
+		setTags(tags);
+	}
 
 	async function deleteImage() {
 		const confirmation = await Dialog.confirm({
@@ -68,19 +137,32 @@ export default function ImagePage()
 
 	return (
 		<PageWrapper title="Image" showMenuButton={false}>
-			<div className="center-container">
+			<div style={{ display: "flex", flexFlow: "column", gap: "1em" }}>
 				{ imageView }
+				<div style={{ alignItems: "center", display: "inherit", flexFlow: "inherit", gap: "inherit" }}>
+					<IonLabel><h2>{ imageFileName }</h2></IonLabel>
+					<div>
+						{
+							tags.map(tag => (
+								<IonChip onClick={ _ => removeTag(tag) }>
+									{ tag }
+									<IonIcon icon={closeCircle}/>
+								</IonChip>
+							))
+						}
+					</div>
+					<IonButton color="secondary" fill="clear" onClick={ _ => addTag() }>
+						<IonIcon icon={add} slot="start"/>
+						Add tag
+					</IonButton>
+				</div>
 			</div>
 
 			<IonFooter style={{ padding: "0.5em" }}>
-				<div style={{ display: "flex", justifyContent: "space-evenly" }} onClick={ _ => deleteImage() }>
+				<div style={{ display: "flex", justifyContent: "center" }} onClick={ _ => deleteImage() }>
 					<IonButton color="danger" fill="clear">
 						<IonIcon icon={trash} slot="start"/>
 						Delete
-					</IonButton>
-					<IonButton color="secondary" fill="clear">
-						<IonIcon icon={pencil} slot="start"/>
-						Metadata
 					</IonButton>
 				</div>
 			</IonFooter>
