@@ -3,13 +3,14 @@ import { UserRoleName } from "./model/user-role";
 import PushNotificationsPage from "./pages/push-notifications";
 import UserInfoPage from "./pages/user-info-page";
 import TopicsPage from "./pages/topics-page";
-import { barcode, camera, chatbubble, cloud, home, image, person } from "ionicons/icons";
+import { barcode, camera, chatbubble, cloud, home, image, person, qrCode } from "ionicons/icons";
 import Page from "./pages/Page";
 import UnauthorizedPage from "./pages/unauthorized-page";
 import BarcodeScannerPage from "./pages/barcode-scanner-page";
 import CameraPage from "./pages/camera-page";
 import GalleryPage from "./pages/gallery-page";
 import ImagePage from "./pages/image-page";
+import QrCodeGeneratorPage from "./pages/qrcode-generator-page";
 
 export interface AppRoute
 {
@@ -68,6 +69,15 @@ export const APP_ROUTES: AppRoute[] = [
 		icon: barcode,
 		path: "/barcode-scanner",
 		title: "Barcode scanner",
+		userNavigatable: true
+	},
+	{
+		allowedRoles: [],
+		children: <QrCodeGeneratorPage/>,
+		exact: true,
+		icon: qrCode,
+		path: "/qrcode-generator",
+		title: "QR code generator",
 		userNavigatable: true
 	},
 	{
